@@ -5,6 +5,7 @@ import { AppService } from './app.service'
 import { CatsModule } from './cats/cats.module'
 import { join } from 'path'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ServeStaticModule } from '@nestjs/serve-static'
 
 @Module({
   imports: [
@@ -21,6 +22,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
     ConfigModule.forRoot({ isGlobal: true }),
     // Feature modules
     CatsModule,
+    // Front end
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+      exclude: ['/api/(.*)'],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
