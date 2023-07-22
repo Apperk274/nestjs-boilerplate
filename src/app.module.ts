@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { CatsModule } from './cats/cats.module'
 import { join } from 'path'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ServeStaticModule } from '@nestjs/serve-static'
+import { CatsModule } from './resources/cats/cats.module'
 
 @Module({
   imports: [
@@ -20,13 +20,13 @@ import { ServeStaticModule } from '@nestjs/serve-static'
       }),
     }),
     ConfigModule.forRoot({ isGlobal: true }),
-    // Feature modules
-    CatsModule,
     // Front end
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
       exclude: ['/api/(.*)'],
     }),
+    // Feature modules
+    CatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
