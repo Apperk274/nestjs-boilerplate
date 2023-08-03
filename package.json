@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && tsc",
     "start": "node -r ts-node/register -r tsconfig-paths/register dist/backend/main",
     "dev": "nest start --watch",
     "debug": "nest start --debug --watch",
