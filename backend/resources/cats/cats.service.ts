@@ -3,13 +3,13 @@ import { CreateCatDto } from './dto/create-cat.dto'
 import { UpdateCatDto } from './dto/update-cat.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { Cat } from '@backend/resources/cats/entities/cat.entity'
+import { CatEntity } from '@backend/resources/cats/entities/cat.entity'
 
 @Injectable()
 export class CatsService {
   constructor(
-    @InjectRepository(Cat)
-    private catsRepository: Repository<Cat>
+    @InjectRepository(CatEntity)
+    private catsRepository: Repository<CatEntity>
   ) {}
   async create(createCatDto: CreateCatDto) {
     await this.catsRepository.save(createCatDto)
