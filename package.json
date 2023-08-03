@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
-    "start": "node dist/main",
+    "build": "tsc",
+    "start": "node -r ts-node/register -r tsconfig-paths/register dist/backend/main",
     "dev": "nest start --watch",
     "debug": "nest start --debug --watch",
     "format": "prettier --write \"backend/**/*.ts\" \"test/**/*.ts\"",
@@ -56,7 +56,6 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },
   "jest": {

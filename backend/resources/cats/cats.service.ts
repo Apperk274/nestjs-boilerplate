@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { CreateCatDto } from './dto/create-cat.dto'
 import { UpdateCatDto } from './dto/update-cat.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Cat } from 'backend/resources/cats/entities/cat.entity'
 import { Repository } from 'typeorm'
+import { Cat } from '@backend/resources/cats/entities/cat.entity'
 
 @Injectable()
 export class CatsService {
