@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { CreateCatDto } from './dto/create-cat.dto'
 import { UpdateCatDto } from './dto/update-cat.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Cat } from 'src/resources/cats/entities/cat.entity'
+import { Cat } from 'backend/resources/cats/entities/cat.entity'
 import { Repository } from 'typeorm'
 
 @Injectable()
