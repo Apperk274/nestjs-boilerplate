@@ -21,6 +21,11 @@
       "@backend/*": [
         "backend/*"
       ]
-    }
+    },
+    "plugins": [
+      {
+        "transform": "typescript-rtti/dist/transformer"
+      }
+    ]
   }
 }
