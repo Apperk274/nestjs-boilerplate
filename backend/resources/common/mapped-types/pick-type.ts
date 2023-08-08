@@ -1,14 +1,14 @@
-import { OmitType as OmitTypeDefault } from '@nestjs/swagger'
+import { PickType as PickTypeDefault } from '@nestjs/swagger'
 import { reflect } from 'typescript-rtti'
 import { Type } from '@nestjs/common'
-import type { OmitStatics } from '@backend/resources/common/mapped-types/util'
+import { OmitStatics } from '@backend/resources/common/mapped-types/util'
 
-export function OmitType<
+export function PickType<
   T extends Type<InstanceType<T>>,
   K extends keyof InstanceType<T>
 >(clazz: T, keys: readonly K[]) {
   // Creating a class that extends from the class T
-  class NewClass extends (OmitTypeDefault(clazz, keys) as any) {}
+  class NewClass extends (PickTypeDefault(clazz, keys) as any) {}
   // Static methods of the new class
   const staticMethodNames = reflect(clazz).staticMethodNames
   for (const staticMethodName of staticMethodNames) {
@@ -22,27 +22,27 @@ export function OmitType<
     NewClass[staticPropName] = clazz[staticPropName]
   }
   // Properties of the new class
-  const propNames = reflect(clazz).propertyNames.filter(
-    k => !keys.includes(k as K)
+  const propNames = reflect(clazz).propertyNames.filter(k =>
+    keys.includes(k as K)
   )
   for (const propName of propNames) {
     reflect(NewClass).propertyNames.push(propName.toString())
     // No need to copy the props since they are inherited (also their default values)
   }
   // Methods of the new class
-  const methodNames = reflect(clazz).methodNames.filter(
-    k => !keys.includes(k as K)
+  const methodNames = reflect(clazz).methodNames.filter(k =>
+    keys.includes(k as K)
   )
   for (const methodName of methodNames) {
     reflect(NewClass).methodNames.push(methodName.toString())
     NewClass.prototype[methodName] = clazz.prototype[methodName]
   }
   // Returning the new class and asserting its type
-  return NewClass as OmitStatics<RemoveKeysFromInstance<T, K>>
+  return NewClass as OmitStatics<PickKeysForInstance<T, K>>
 }
-type RemoveKeysFromInstance<
+type PickKeysForInstance<
   T extends new (...args: any[]) => any,
   K extends keyof InstanceType<T>
 > = {
   [P in keyof T]: T[P]
-} & { new (...args: any[]): Omit<InstanceType<T>, K> }
+} & { new (...args: any[]): Pick<InstanceType<T>, K> }
