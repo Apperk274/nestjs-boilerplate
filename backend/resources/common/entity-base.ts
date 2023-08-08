@@ -1,3 +1,4 @@
+import { Model } from '@backend/resources/common/model'
 import {
   CreateDateColumn,
   DeleteDateColumn,
@@ -5,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-export class EntityBase {
+export class EntityBase extends Model {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
