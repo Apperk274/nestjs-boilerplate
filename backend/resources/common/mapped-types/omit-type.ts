@@ -40,7 +40,7 @@ export function OmitType<
     NewClass.prototype[methodName] = clazz.prototype[methodName]
   }
   // Returning the new class and asserting its type
-  return NewClass as OmitStatics<RemoveKeysFromInstance<T, K>, K>
+  return NewClass as OmitStatics<RemoveKeysFromInstance<T, K>>
 }
 type RemoveKeysFromInstance<
   T extends new (...args: any[]) => any,
@@ -49,8 +49,8 @@ type RemoveKeysFromInstance<
   [P in keyof T]: T[P]
 } & { new (...args: any[]): Omit<InstanceType<T>, K> }
 
-type OmitStatics<T, S extends string | number | symbol> = T extends {
+type OmitStatics<T> = T extends {
   new (...args: infer A): infer R
 }
-  ? { new (...args: A): R } & Omit<T, S>
-  : Omit<T, S>
+  ? { new (...args: A): R } & Omit<T, keyof InstanceType<T>>
+  : never
