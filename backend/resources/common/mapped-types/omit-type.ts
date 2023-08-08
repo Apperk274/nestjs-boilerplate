@@ -47,6 +47,7 @@ export function OmitType<
   // Returning the new class and asserting its type
   return NewClass as OmitStatics<RemoveKeysFromInstance<T, K>>
 }
+
 type RemoveKeysFromInstance<
   T extends new (...args: any[]) => any,
   K extends keyof InstanceType<T>
