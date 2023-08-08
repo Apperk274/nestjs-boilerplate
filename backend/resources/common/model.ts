@@ -42,7 +42,6 @@ export class ModelUtil {
   ) {
     const smallClassInstance = new smallClass()
     const smallClassPropertyNames = reflect(smallClass).propertyNames
-    console.log(smallClassPropertyNames)
     for (const key of smallClassPropertyNames) {
       smallClassInstance[key as keyof S] = bigClassInstance[
         key as keyof B
