@@ -1,7 +1,10 @@
 import { OmitType as OmitTypeDefault } from '@nestjs/swagger'
 import { reflect } from 'typescript-rtti'
 import { Type } from '@nestjs/common'
-import type { OmitStatics } from '@backend/resources/common/mapped-types/util'
+import {
+  addToReflect,
+  type OmitStatics,
+} from '@backend/resources/common/mapped-types/util'
 
 export function OmitType<
   T extends Type<InstanceType<T>>,
@@ -9,34 +12,38 @@ export function OmitType<
 >(clazz: T, keys: readonly K[]) {
   // Creating a class that extends from the class T
   class NewClass extends (OmitTypeDefault(clazz, keys) as any) {}
-  // Static methods of the new class
-  const staticMethodNames = reflect(clazz).staticMethodNames
-  for (const staticMethodName of staticMethodNames) {
-    reflect(NewClass).staticMethodNames.push(staticMethodName.toString())
-    NewClass[staticMethodName] = clazz[staticMethodName]
+
+  const staticMethods = reflect(clazz).staticMethods
+  for (const staticMethod of staticMethods) {
+    addToReflect(NewClass, staticMethod)
+    // Copying the static method to the new class
+    NewClass[staticMethod.name] = clazz[staticMethod.name]
   }
-  // Static properties of the new class
-  const staticPropNames = reflect(clazz).staticPropertyNames
-  for (const staticPropName of staticPropNames) {
-    reflect(NewClass).staticPropertyNames.push(staticPropName.toString())
-    NewClass[staticPropName] = clazz[staticPropName]
+
+  const staticProps = reflect(clazz).staticProperties
+  for (const staticProp of staticProps) {
+    addToReflect(NewClass, staticProp)
+    // Copying the static prop to the new class
+    NewClass[staticProp.name] = clazz[staticProp.name]
   }
-  // Properties of the new class
-  const propNames = reflect(clazz).propertyNames.filter(
-    k => !keys.includes(k as K)
+
+  const props = reflect(clazz).properties.filter(
+    p => !keys.includes(p.name as K)
   )
-  for (const propName of propNames) {
-    reflect(NewClass).propertyNames.push(propName.toString())
+  for (const prop of props) {
+    addToReflect(NewClass, prop)
     // No need to copy the props since they are inherited (also their default values)
   }
-  // Methods of the new class
-  const methodNames = reflect(clazz).methodNames.filter(
-    k => !keys.includes(k as K)
+
+  const methods = reflect(clazz).methods.filter(
+    m => !keys.includes(m.name as K)
   )
-  for (const methodName of methodNames) {
-    reflect(NewClass).methodNames.push(methodName.toString())
-    NewClass.prototype[methodName] = clazz.prototype[methodName]
+  for (const method of methods) {
+    addToReflect(NewClass, method)
+    // Copying the default value of the method to the new class
+    NewClass.prototype[method.name] = clazz.prototype[method.name]
   }
+
   // Returning the new class and asserting its type
   return NewClass as OmitStatics<RemoveKeysFromInstance<T, K>>
 }
