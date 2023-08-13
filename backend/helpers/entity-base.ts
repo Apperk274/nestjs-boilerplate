@@ -1,10 +1,10 @@
-import { Model } from '@backend/resources/common/model'
 import {
   CreateDateColumn,
   DeleteDateColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
+import { Model } from '@backend/helpers/model'
 
 export class EntityBase extends Model {
   @PrimaryGeneratedColumn('uuid')
