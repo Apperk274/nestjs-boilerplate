@@ -1,14 +1,16 @@
-import { OmitType as OmitTypeDefault } from '@nestjs/swagger'
 import { Type } from '@nestjs/common'
-import { copyClassData, removeInstanceMembers, type OmitStatics } from './util'
+import {
+  removeInstanceMembers,
+  performRecursively,
+  type OmitStatics,
+} from './util'
 
 export function OmitType<
   T extends Type<InstanceType<T>>,
   K extends keyof InstanceType<T> & string
 >(clazz: T, keys: readonly K[]) {
-  class NewClass extends (OmitTypeDefault(clazz, keys) as any) {}
-  copyClassData(clazz, NewClass)
-  removeInstanceMembers(NewClass, keys)
+  class NewClass extends (clazz as any) {}
+  performRecursively(NewClass, cl => removeInstanceMembers(cl, keys))
   return NewClass as OmitStatics<RemoveKeysFromInstance<T, K>>
 }
 

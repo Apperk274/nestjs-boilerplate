@@ -1,4 +1,5 @@
 import { Type } from '@nestjs/common'
+import { reflect } from 'typescript-rtti'
 
 const rtti = {
   PROPS: 'rt:P',
@@ -15,6 +16,7 @@ export function removeInstanceMembers<T extends Type<InstanceType<T>>>(
   const propNames = Reflect.getMetadata(rtti.PROPS, clazz) as string[]
   const newPropNames = propNames.filter(pN => !memberNamesToRemove.includes(pN))
   Reflect.defineMetadata(rtti.PROPS, newPropNames, clazz)
+  console.log({ propNames, newPropNames })
 
   const methodNames = Reflect.getMetadata(rtti.METHODS, clazz) as string[]
   const newMethodNames = methodNames.filter(
@@ -43,9 +45,9 @@ export function copyClassData<T extends Type<InstanceType<T>>>(
     Reflect.getMetadataKeys(superClass.prototype, propName).forEach(key => {
       const value = Reflect.getMetadata(key, superClass.prototype, propName)
       Reflect.defineMetadata(key, value, NewClass.prototype, propName)
-      // * No need to copy the props since they are inherited (also their default values)
     })
   })
+  // * No need to copy the default values of props since they are inherited
 
   // Copy instance method names
   const methodNames = Reflect.getMetadata(rtti.METHODS, superClass) as string[]
@@ -56,9 +58,11 @@ export function copyClassData<T extends Type<InstanceType<T>>>(
     Reflect.getMetadataKeys(superClass.prototype, methodName).forEach(key => {
       const value = Reflect.getMetadata(key, superClass.prototype, methodName)
       Reflect.defineMetadata(key, value, NewClass.prototype, methodName)
-      // Copy the default value of the method to the new class's instances
-      NewClass.prototype[methodName] = superClass.prototype[methodName]
     })
+  })
+  // Copy the default value of the method to the new class's instances
+  reflect(superClass).methodNames.forEach(methodName => {
+    NewClass.prototype[methodName] = superClass.prototype[methodName]
   })
 
   // Copy static property names
@@ -73,9 +77,11 @@ export function copyClassData<T extends Type<InstanceType<T>>>(
     Reflect.getMetadataKeys(superClass, propName).forEach(key => {
       const value = Reflect.getMetadata(key, superClass, propName)
       Reflect.defineMetadata(key, value, NewClass, propName)
-      // Copy the value of the static prop to the new class
-      NewClass[propName] = superClass[propName]
     })
+  })
+  // Copy the value of the static prop to the new class
+  reflect(superClass).staticPropertyNames.forEach(propName => {
+    NewClass[propName] = superClass[propName]
   })
 
   // Copy static method names
@@ -90,25 +96,29 @@ export function copyClassData<T extends Type<InstanceType<T>>>(
     Reflect.getMetadataKeys(superClass, methodName).forEach(key => {
       const value = Reflect.getMetadata(key, superClass, methodName)
       Reflect.defineMetadata(key, value, NewClass, methodName)
-      // Copy the value of the static method to the new class
-      NewClass[methodName] = superClass[methodName]
     })
+  })
+  // Copy the values of the static methods to the new class
+  reflect(superClass).staticMethodNames.forEach(methodName => {
+    NewClass[methodName] = superClass[methodName]
   })
 }
 
-export function getInstanceMemberNames<T extends Type<InstanceType<T>>>(
-  clazz: T
-) {
+export function getOwnInstanceMemberNames<
+  T extends Type<InstanceType<T>>,
+  K extends keyof InstanceType<T> & string
+>(clazz: T) {
   return [
     ...Reflect.getMetadata(rtti.PROPS, clazz),
     ...Reflect.getMetadata(rtti.METHODS, clazz),
-  ] as string[]
+  ] as K[]
 }
 
-export function setOptionality<
-  T extends Type<InstanceType<T>>,
-  K extends keyof InstanceType<T>
->(clazz: T, key: K & string, value: boolean) {
+export function setOptionality<T extends Type<InstanceType<T>>>(
+  clazz: T,
+  key: string,
+  value: boolean
+) {
   let formatMetadata = Reflect.getMetadata(
     rtti.FORMAT,
     clazz.prototype,
@@ -117,6 +127,21 @@ export function setOptionality<
   formatMetadata = formatMetadata.replaceAll('?', '')
   if (value) formatMetadata += '?'
   Reflect.defineMetadata(rtti.FORMAT, formatMetadata, clazz.prototype, key)
+}
+
+export function performRecursively<T extends Type>(
+  clazz: T,
+  operation: (clazz: T) => any
+) {
+  // Check if reached the end of classes by any rtti metadata key
+  if (!Reflect.getMetadataKeys(clazz).includes(rtti.PROPS)) return
+  // Run operation
+  operation(clazz)
+  // Continue on super class
+  performRecursively(
+    Object.getPrototypeOf(clazz.prototype).constructor,
+    operation
+  )
 }
 
 export type OmitStatics<T> = T extends {

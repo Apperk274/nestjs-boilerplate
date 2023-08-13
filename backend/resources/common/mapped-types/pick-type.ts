@@ -1,20 +1,22 @@
-import { PickType as PickTypeDefault } from '@nestjs/swagger'
 import { Type } from '@nestjs/common'
 import {
-  copyClassData,
-  getInstanceMemberNames,
+  getOwnInstanceMemberNames,
   removeInstanceMembers,
+  performRecursively,
   type OmitStatics,
 } from './util'
 
 export function PickType<
   T extends Type<InstanceType<T>>,
-  K extends keyof InstanceType<T>
->(clazz: T, keys: readonly K[] & string) {
-  const toRemove = getInstanceMemberNames(clazz).filter(k => !keys.includes(k))
-  class NewClass extends (PickTypeDefault(clazz, keys) as any) {}
-  copyClassData(clazz, NewClass)
-  removeInstanceMembers(NewClass, toRemove)
+  K extends keyof InstanceType<T> & string
+>(clazz: T, keys: K[]) {
+  class NewClass extends (clazz as any) {}
+  performRecursively(NewClass, cl => {
+    const toRemove = getOwnInstanceMemberNames(cl).filter(
+      k => !keys.includes(k as any)
+    )
+    removeInstanceMembers(cl, toRemove)
+  })
   return NewClass as OmitStatics<PickKeysForInstance<T, K>>
 }
 

@@ -17,5 +17,5 @@ export class EntityBase extends Model {
   updatedAt: Date
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date
+  deletedAt?: Date
 }

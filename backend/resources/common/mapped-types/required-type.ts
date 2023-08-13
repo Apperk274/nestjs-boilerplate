@@ -1,17 +1,15 @@
 import { Type } from '@nestjs/common'
 import {
-  copyClassData,
-  type OmitStatics,
-  getInstanceMemberNames,
+  getOwnInstanceMemberNames,
   setOptionality,
+  performRecursively,
+  type OmitStatics,
 } from './util'
 
 export function RequiredType<T extends Type<InstanceType<T>>>(clazz: T) {
-  const instanceMemberNames = getInstanceMemberNames(clazz)
   class NewClass extends (clazz as any) {}
-  copyClassData(clazz, NewClass)
-  instanceMemberNames.forEach(n => {
-    setOptionality(NewClass, n, false)
+  performRecursively(NewClass, cl => {
+    getOwnInstanceMemberNames(cl).forEach(n => setOptionality(cl, n, false))
   })
   return NewClass as OmitStatics<MakeInstanceRequired<T>>
 }
