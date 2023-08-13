@@ -3,5 +3,15 @@
   "singleQuote": true,
   "semi": false,
   "endOfLine": "auto",
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": [
+        "*.spec.ts"
+      ],
+      "options": {
+        "printWidth": 120
+      }
+    }
+  ]
 }
