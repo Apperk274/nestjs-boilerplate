@@ -1,12 +1,11 @@
 import { Type } from '@nestjs/common'
 import { copyClassData, type OmitStatics } from './util'
-import { OmitType as OmitTypeSwagger } from '@nestjs/swagger'
 
 export function OmitType<
   T extends Type<InstanceType<T>>,
   K extends keyof InstanceType<T> & string
 >(clazz: T, keys: readonly K[]) {
-  const NewClass = OmitTypeSwagger(clazz, keys)
+  class NewClass {}
   copyClassData(clazz, NewClass, { excludedMembers: keys })
   return NewClass as OmitStatics<RemoveKeysFromInstance<T, K>>
 }

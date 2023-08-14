@@ -1,6 +1,5 @@
 import { Type } from '@nestjs/common'
 import { getInstanceMemberNames, copyClassData, type OmitStatics } from './util'
-import { PickType as PickTypeSwagger } from '@nestjs/swagger'
 
 export function PickType<
   T extends Type<InstanceType<T>>,
@@ -9,7 +8,7 @@ export function PickType<
   const excludedKeys = getInstanceMemberNames(clazz).filter(
     k => !keys.includes(k as any)
   )
-  const NewClass = PickTypeSwagger(clazz, keys)
+  class NewClass {}
   copyClassData(clazz, NewClass, { excludedMembers: excludedKeys })
   return NewClass as OmitStatics<PickKeysForInstance<T, K>>
 }

@@ -1,16 +1,15 @@
 import { Type } from '@nestjs/common'
 import {
-  getOwnInstanceMemberNames,
   setOptionality,
-  performRecursively,
+  getInstanceMemberNames,
+  copyClassData,
   type OmitStatics,
 } from './util'
 
 export function PartialType<T extends Type<InstanceType<T>>>(clazz: T) {
-  class NewClass extends (clazz as any) {}
-  performRecursively(NewClass, cl => {
-    getOwnInstanceMemberNames(cl).forEach(n => setOptionality(cl, n, true))
-  })
+  class NewClass {}
+  copyClassData(clazz, NewClass)
+  getInstanceMemberNames(clazz).forEach(n => setOptionality(NewClass, n, true))
   return NewClass as OmitStatics<MakeInstancePartial<T>>
 }
 
