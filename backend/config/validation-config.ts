@@ -1,13 +1,9 @@
-import { ValidationPipeOptions } from '@nestjs/common'
+import { ValidationPipe, ValidationPipeOptions } from '@nestjs/common'
 
-// interface ValidationPipeOptions extends ValidatorOptions {
-//   transform?: boolean
-//   disableErrorMessages?: boolean
-//   exceptionFactory?: (errors: ValidationError[]) => any
-// }
-
-export const validationPipeOptions: ValidationPipeOptions = {
+const pipeOptions: ValidationPipeOptions = {
   whitelist: true,
   forbidNonWhitelisted: true,
   transform: true,
 }
+
+export const validationPipe = new ValidationPipe(pipeOptions)

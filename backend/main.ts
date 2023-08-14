@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
-import { ValidationPipe } from '@nestjs/common'
-import { validationPipeOptions } from 'backend/config/validation-config'
+import { validationPipe } from 'backend/config/validation-config'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 
@@ -12,7 +11,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService)
   // Middlewares / Pipes
   app.setGlobalPrefix('api')
-  app.useGlobalPipes(new ValidationPipe(validationPipeOptions))
+  app.useGlobalPipes(validationPipe)
   // Configuring OpenAPI (Swagger)
   const config = new DocumentBuilder()
     .setTitle('NestJS Application')
