@@ -9,18 +9,22 @@ export class Model {
     return ModelUtil.create(this, obj)
   }
 
-  static createPartially<T extends object>(
+  static createPartial<T extends object>(
     this: new () => T,
     obj: Partial<T>
   ): T {
-    return ModelUtil.createPartially(this, obj)
+    return ModelUtil.createPartial(this, obj)
   }
 
-  static createFrom<T extends object, G extends T>(
+  static from<T extends object, G extends T>(this: new () => T, obj: G): T {
+    return ModelUtil.from(this, obj)
+  }
+
+  static fromMany<T extends object, G extends T>(
     this: new () => T,
-    obj: G
-  ): T {
-    return ModelUtil.narrowToClass(obj, this)
+    objs: G[]
+  ): T[] {
+    return ModelUtil.fromMany(this, objs)
   }
 }
 
@@ -30,12 +34,16 @@ class ModelOf<T extends object> {
     return ModelUtil.create(this.clazz, obj)
   }
 
-  createPartially(obj: Partial<T>): T {
-    return ModelUtil.createPartially(this.clazz, obj)
+  createPartial(obj: Partial<T>): T {
+    return ModelUtil.createPartial(this.clazz, obj)
   }
 
-  createFrom<G extends T>(obj: G): T {
-    return ModelUtil.narrowToClass(obj, this.clazz)
+  from<G extends T>(obj: G): T {
+    return ModelUtil.from(this.clazz, obj)
+  }
+
+  fromMany<G extends T>(objs: G[]): T[] {
+    return ModelUtil.fromMany(this.clazz, objs)
   }
 }
 export class ModelUtil {
@@ -60,7 +68,7 @@ export class ModelUtil {
     return instance
   }
 
-  static createPartially<T extends object>(
+  static createPartial<T extends object>(
     clazz: new () => T,
     obj: Partial<T>
   ): T {
@@ -71,11 +79,15 @@ export class ModelUtil {
     return instance
   }
 
-  static createFrom<T extends object, G extends T>(
-    clazz: new () => T,
-    obj: G
-  ): T {
+  static from<T extends object, G extends T>(clazz: new () => T, obj: G): T {
     return ModelUtil.narrowToClass(obj, clazz)
+  }
+
+  static fromMany<T extends object, G extends T>(
+    clazz: new () => T,
+    objs: G[]
+  ) {
+    return objs.map(obj => ModelUtil.from(clazz, obj))
   }
 }
 
