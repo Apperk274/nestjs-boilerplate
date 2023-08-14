@@ -10,6 +10,7 @@ import {
 import { CatsService } from './cats.service'
 import { CreateCatDto } from './dto/create-cat.dto'
 import { UpdateCatDto } from './dto/update-cat.dto'
+import { Cat } from '@backend/resources/cats/dto/cat.dto'
 
 @Controller('cats')
 export class CatsController {
@@ -22,8 +23,9 @@ export class CatsController {
   }
 
   @Get()
-  findAll() {
-    return this.catsService.findAll()
+  async findAll() {
+    const [entities, count] = await this.catsService.findAll()
+    return [Cat.fromMany(entities), count]
   }
 
   @Get(':id')
