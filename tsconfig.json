@@ -27,5 +27,12 @@
         "transform": "typescript-rtti/dist/transformer"
       }
     ]
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "frontend",
+    "**/*spec.ts"
+  ]
 }
