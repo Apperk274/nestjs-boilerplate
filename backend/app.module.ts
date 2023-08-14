@@ -16,7 +16,7 @@ import { CatsModule } from './resources/cats/cats.module'
         type: 'postgres',
         url: configService.get('DB_CSTR'),
         synchronize: process.env.NODE_ENV !== 'production',
-        entities: [join(__dirname, '**/*.entity.{ts,js}')],
+        autoLoadEntities: true,
       }),
     }),
     ConfigModule.forRoot({ isGlobal: true }),
