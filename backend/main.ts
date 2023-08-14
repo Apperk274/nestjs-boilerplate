@@ -6,6 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 
 async function bootstrap() {
+  process.env.TZ = 'Etc/UTC'
   const app = await NestFactory.create(AppModule)
   // Importing env
   const configService = app.get(ConfigService)
