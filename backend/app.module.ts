@@ -22,7 +22,7 @@ import { CatsModule } from './resources/cats/cats.module'
     ConfigModule.forRoot({ isGlobal: true }),
     // Front end
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
+      rootPath: join(__dirname, '..', 'frontend'),
       exclude: ['/api/(.*)'],
     }),
     // Feature modules
