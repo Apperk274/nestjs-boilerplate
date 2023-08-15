@@ -6,7 +6,7 @@ import {
   type OmitStatics,
 } from './util'
 
-export function RequiredType<T extends Type<InstanceType<T>>>(clazz: T) {
+export function RequiredClass<T extends Type<InstanceType<T>>>(clazz: T) {
   class NewClass {}
   copyClassData(clazz, NewClass)
   getInstanceMemberNames(clazz).forEach(n => setOptionality(NewClass, n, false))

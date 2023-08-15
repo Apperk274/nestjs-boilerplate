@@ -1,7 +1,7 @@
 import { Type } from '@nestjs/common'
 import { getInstanceMemberNames, copyClassData, type OmitStatics } from './util'
 
-export function PickType<
+export function PickClass<
   T extends Type<InstanceType<T>>,
   K extends keyof InstanceType<T> & string
 >(clazz: T, keys: K[]) {

@@ -1,7 +1,7 @@
 import { Type } from '@nestjs/common'
 import { copyClassData, type OmitStatics } from './util'
 
-export function OmitType<
+export function OmitClass<
   T extends Type<InstanceType<T>>,
   K extends keyof InstanceType<T> & string
 >(clazz: T, keys: readonly K[]) {

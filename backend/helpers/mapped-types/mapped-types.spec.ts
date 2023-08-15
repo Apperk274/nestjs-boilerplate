@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { OmitType } from '@backend/helpers/mapped-types/omit-type'
 import { reflect } from 'typescript-rtti'
 import 'reflect-metadata'
-import { PickType } from '@backend/helpers/mapped-types/pick-type'
-import { PartialType } from '@backend/helpers/mapped-types/partial-type'
+import { PickClass, OmitClass, PartialClass } from './index'
 
 describe('mapped-types', () => {
   class ClassX {
@@ -32,7 +30,7 @@ describe('mapped-types', () => {
 
   describe('omit-type', () => {
     describe('two-classes', () => {
-      class ClassY extends OmitType(ClassX, ['a', 'c', 'j']) {
+      class ClassY extends OmitClass(ClassX, ['a', 'c', 'j']) {
         // Instance prop without default value
         e: string
         // Instance prop with default value
@@ -112,7 +110,7 @@ describe('mapped-types', () => {
             return 'Hello sK, ' + p
           }
         }
-        class ClassZ extends OmitType(ClassY, ['a', 'c', 'j', 'e', 'g', 'l']) {
+        class ClassZ extends OmitClass(ClassY, ['a', 'c', 'j', 'e', 'g', 'l']) {
           // Instance prop without default value
           i: string
           // Instance prop with default value
@@ -177,7 +175,7 @@ describe('mapped-types', () => {
         })
       })
       describe('middle-class', () => {
-        class ClassY extends OmitType(ClassX, ['a', 'c', 'j']) {
+        class ClassY extends OmitClass(ClassX, ['a', 'c', 'j']) {
           // Instance props without default values
           e: string
           f: string
@@ -265,7 +263,7 @@ describe('mapped-types', () => {
         })
       })
       describe('both-classes', () => {
-        class ClassY extends OmitType(ClassX, ['a', 'c', 'j']) {
+        class ClassY extends OmitClass(ClassX, ['a', 'c', 'j']) {
           // Instance props without default values
           e: string
           f: string
@@ -288,7 +286,7 @@ describe('mapped-types', () => {
             return 'Hello sK, ' + p
           }
         }
-        class ClassZ extends OmitType(ClassY, ['e', 'g', 'l']) {
+        class ClassZ extends OmitClass(ClassY, ['e', 'g', 'l']) {
           // Instance prop without default value
           i: string
           // Instance prop with default value
@@ -391,7 +389,7 @@ describe('mapped-types', () => {
   })
   describe('pick-type', () => {
     describe('two-classes', () => {
-      class ClassY extends PickType(ClassX, ['b', 'd', 'k']) {
+      class ClassY extends PickClass(ClassX, ['b', 'd', 'k']) {
         // Instance prop without default value
         e: string
         // Instance prop with default value
@@ -471,7 +469,7 @@ describe('mapped-types', () => {
             return 'Hello sK, ' + p
           }
         }
-        class ClassZ extends PickType(ClassY, ['b', 'd', 'k', 'f', 'h', 'm']) {
+        class ClassZ extends PickClass(ClassY, ['b', 'd', 'k', 'f', 'h', 'm']) {
           // Instance prop without default value
           i: string
           // Instance prop with default value
@@ -536,7 +534,7 @@ describe('mapped-types', () => {
         })
       })
       describe('middle-class', () => {
-        class ClassY extends PickType(ClassX, ['b', 'd', 'k']) {
+        class ClassY extends PickClass(ClassX, ['b', 'd', 'k']) {
           // Instance props without default values
           e: string
           f: string
@@ -624,7 +622,7 @@ describe('mapped-types', () => {
         })
       })
       describe('both-classes', () => {
-        class ClassY extends PickType(ClassX, ['b', 'd', 'k']) {
+        class ClassY extends PickClass(ClassX, ['b', 'd', 'k']) {
           // Instance props without default values
           e: string
           f: string
@@ -647,7 +645,7 @@ describe('mapped-types', () => {
             return 'Hello sK, ' + p
           }
         }
-        class ClassZ extends PickType(ClassY, ['b', 'd', 'k', 'f', 'h', 'm']) {
+        class ClassZ extends PickClass(ClassY, ['b', 'd', 'k', 'f', 'h', 'm']) {
           // Instance prop without default value
           i: string
           // Instance prop with default value
@@ -750,7 +748,7 @@ describe('mapped-types', () => {
   })
   describe('partial-type', () => {
     describe('two-classes', () => {
-      class ClassY extends PartialType(ClassX) {
+      class ClassY extends PartialClass(ClassX) {
         // Instance prop without default value
         e: string
         // Instance prop with default value
@@ -839,7 +837,7 @@ describe('mapped-types', () => {
             return 'Hello sK, ' + p
           }
         }
-        class ClassZ extends PartialType(ClassY) {
+        class ClassZ extends PartialClass(ClassY) {
           // Instance prop without default value
           i: string
           // Instance prop with default value
@@ -919,7 +917,7 @@ describe('mapped-types', () => {
         })
       })
       describe('middle-class', () => {
-        class ClassY extends PartialType(ClassX) {
+        class ClassY extends PartialClass(ClassX) {
           // Instance props without default values
           e: string
           f: string
@@ -1022,7 +1020,7 @@ describe('mapped-types', () => {
         })
       })
       describe('both-classes', () => {
-        class ClassY extends PartialType(ClassX) {
+        class ClassY extends PartialClass(ClassX) {
           // Instance props without default values
           e: string
           f: string
@@ -1045,7 +1043,7 @@ describe('mapped-types', () => {
             return 'Hello sK, ' + p
           }
         }
-        class ClassZ extends PartialType(ClassY) {
+        class ClassZ extends PartialClass(ClassY) {
           // Instance prop without default value
           i: string
           // Instance prop with default value
