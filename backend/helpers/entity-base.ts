@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import { Model } from '@backend/helpers/model'
+import { Model } from '@/helpers/model'
 
 export class EntityBase extends Model {
   @PrimaryGeneratedColumn('uuid')

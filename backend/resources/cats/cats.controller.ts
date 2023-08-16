@@ -10,7 +10,7 @@ import {
 import { CatsService } from './cats.service'
 import { CreateCatDto } from './dto/create-cat.dto'
 import { UpdateCatDto } from './dto/update-cat.dto'
-import { Cat } from '@backend/resources/cats/dto/cat.dto'
+import { Cat } from '@/resources/cats/dto/cat.dto'
 
 @Controller('cats')
 export class CatsController {

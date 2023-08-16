@@ -1,4 +1,4 @@
-import { EntityBase } from '@backend/helpers/entity-base'
+import { EntityBase } from '@/helpers/entity-base'
 import { Column, Entity } from 'typeorm'
 
 @Entity()

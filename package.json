@@ -84,7 +84,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@backend/(.*)$": "<rootDir>/$1"
+      "^@/(.*)$": "<rootDir>/$1"
     }
   }
 }
