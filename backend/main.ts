@@ -3,9 +3,13 @@ import { AppModule } from './app.module'
 import { validationPipe } from 'backend/config/validation-config'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
+import { generateModels } from '@/code-generation/generate-models'
+import { startFrontend } from '@/config/start-frontend'
 
 async function bootstrap() {
   process.env.TZ = 'Etc/UTC'
+  await generateModels()
+  // startFrontend()
   const app = await NestFactory.create(AppModule)
   // Importing env
   const configService = app.get(ConfigService)

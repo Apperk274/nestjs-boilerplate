@@ -1,4 +1,5 @@
 import { Type } from '@nestjs/common'
+import { getMetadataStorage } from 'class-validator'
 import { reflect } from 'typescript-rtti'
 
 const rtti = {
@@ -87,6 +88,17 @@ export function copyClassData<T extends Type<InstanceType<T>>>(
   reflect(fromClass).staticMethodNames.forEach(methodName => {
     toClass[methodName] = fromClass[methodName]
   })
+
+  // Copy validators
+  const validationMetadatas = getMetadataStorage().getTargetValidationMetadatas(
+    fromClass,
+    '',
+    false,
+    false
+  )
+  validationMetadatas.forEach(vMD =>
+    getMetadataStorage().addValidationMetadata({ ...vMD, target: toClass })
+  )
 }
 
 export function getOwnInstanceMemberNames<
