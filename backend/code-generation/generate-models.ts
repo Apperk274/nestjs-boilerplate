@@ -11,7 +11,7 @@ import {
 import { getMetadataStorage } from 'class-validator'
 import { RtType } from 'typescript-rtti/dist/common'
 import { ValidationMetadata } from 'class-validator/types/metadata/ValidationMetadata'
-import { writeFileSync } from 'fs'
+import { copyFileSync, writeFileSync } from 'fs'
 
 export async function generateModels() {
   const classPaths = globSync('./backend/resources/**/*.dto.ts').map(e =>
@@ -38,10 +38,17 @@ export async function generateModels() {
         validatorsToImport.add(capitalizeDecorator(vmd.name!))
       })
       const classDeclaration = ts.factory.createClassDeclaration(
+        [ts.factory.createToken(ts.SyntaxKind.ExportKeyword)],
+        ts.factory.createIdentifier(className),
         undefined,
-        className,
-        undefined,
-        undefined,
+        [
+          ts.factory.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [
+            ts.factory.createExpressionWithTypeArguments(
+              ts.factory.createIdentifier('Model'),
+              undefined
+            ),
+          ]),
+        ],
         props.map(p =>
           createPropertyDeclaration(
             p,
@@ -80,9 +87,14 @@ export async function generateModels() {
     ts.factory.createStringLiteral('class-validator'),
     undefined
   )
+  // Creating other imports
+  const otherImports = createImports([
+    { path: './model', namedImports: ['Model'] },
+  ])
   // Creating the code
   const nodeArray = ts.factory.createNodeArray([
     validatorsImportDeclaration,
+    ...otherImports,
     ...classDeclarations,
   ])
   const printer = ts.createPrinter({
@@ -95,6 +107,8 @@ export async function generateModels() {
   )
   // Writing everything in a file
   writeFileSync('./frontend/src/models/index.ts', code, 'utf-8')
+  // Copying Model file
+  copyFileSync('./backend/helpers/model.ts', './frontend/src/models/model.ts')
 }
 
 function createPropertyDeclaration(
@@ -258,4 +272,36 @@ function addValidatorIfOptional(p: ReflectedProperty) {
         ),
       ]
     : []
+}
+
+type Imports = {
+  path: string
+  defaultImport?: string
+  namedImports?: string[]
+}[]
+
+function createImports(imports: Imports) {
+  return imports.map(i =>
+    ts.factory.createImportDeclaration(
+      undefined,
+      ts.factory.createImportClause(
+        false,
+        i.defaultImport === undefined
+          ? undefined
+          : ts.factory.createIdentifier(i.defaultImport),
+        i.namedImports === undefined
+          ? undefined
+          : ts.factory.createNamedImports(
+              i.namedImports.map(ni =>
+                ts.factory.createImportSpecifier(
+                  false,
+                  undefined,
+                  ts.factory.createIdentifier(ni)
+                )
+              )
+            )
+      ),
+      ts.factory.createStringLiteral(i.path)
+    )
+  )
 }
