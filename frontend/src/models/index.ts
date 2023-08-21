@@ -8,7 +8,6 @@ export class UpdateCatDto extends Model {
     @IsOptional()
     @IsInt()
     age?: number;
-    static deneme: "asd";
 }
 export class CreateCatDto extends Model {
     @Length(1, 32)
@@ -16,7 +15,6 @@ export class CreateCatDto extends Model {
     name: string;
     @IsInt()
     age: number;
-    static deneme: "asd";
 }
 export class Cat extends Model {
     id: string;

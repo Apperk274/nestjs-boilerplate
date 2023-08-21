@@ -6,12 +6,17 @@ import {
   type ReflectedProperty,
   reflect,
   ReflectedTypeRef,
-  ReflectedObjectRef,
 } from 'typescript-rtti'
 import { getMetadataStorage } from 'class-validator'
 import { RtType } from 'typescript-rtti/dist/common'
-import { ValidationMetadata } from 'class-validator/types/metadata/ValidationMetadata'
-import { copyFileSync, writeFileSync } from 'fs'
+import type { ValidationMetadata } from 'class-validator/types/metadata/ValidationMetadata'
+import { copyFileSync, readFileSync, writeFileSync } from 'fs'
+import {
+  capitalizeDecorator,
+  isObjectLiteral,
+  lowerCaseIfPrimitive,
+  removeEach,
+} from '@/code-generation/util'
 
 export async function generateModels() {
   const classPaths = globSync('./backend/resources/**/*.dto.ts').map(e =>
@@ -62,7 +67,7 @@ export async function generateModels() {
   }
   // Combining class declarations
   const resultFile = ts.createSourceFile(
-    'someFileName.ts',
+    'index.ts',
     '',
     ts.ScriptTarget.Latest,
     /*setParentNodes*/ false,
@@ -109,8 +114,49 @@ export async function generateModels() {
   writeFileSync('./frontend/src/models/index.ts', code, 'utf-8')
   // Copying Model file
   copyFileSync('./backend/helpers/model.ts', './frontend/src/models/model.ts')
+  // Creating model class file
+  createModelClassFile()
 }
 
+function createModelClassFile() {
+  const sourceFilePath = './backend/helpers/model.ts'
+  const outputFilePath = './frontend/src/models/model.ts'
+  const sourceCode = readFileSync(sourceFilePath, 'utf-8')
+  const sourceFile = ts.createSourceFile(
+    'model.ts',
+    sourceCode,
+    ts.ScriptTarget.Latest,
+    true
+  )
+  const importSt1 = sourceFile.getChildAt(0).getChildAt(0).getFullText() // import { reflect } from 'typescript-rtti'
+  const importSt2 = sourceFile.getChildAt(0).getChildAt(1).getFullText() // import 'reflect-metadata'
+  const codeWithoutImports = sourceCode
+    .replace(importSt1, '')
+    .replace(importSt2, '')
+  const modelBody = sourceFile.getChildAt(0).getChildAt(2).getChildAt(4)
+  const modelOfBody = sourceFile.getChildAt(0).getChildAt(3).getChildAt(6)
+  const modelUtilBody = sourceFile.getChildAt(0).getChildAt(4).getChildAt(4)
+  const modelFrom = modelBody.getChildAt(3).getFullText()
+  const modelFromMany = modelBody.getChildAt(4).getFullText()
+  const modelOfFrom = modelOfBody.getChildAt(3).getFullText()
+  const modelOfFromMany = modelOfBody.getChildAt(4).getFullText()
+  const modelUtilNarrow = modelUtilBody.getChildAt(0).getFullText()
+  const modelUtilFrom = modelUtilBody.getChildAt(3).getFullText()
+  const modelUtilFromMany = modelUtilBody.getChildAt(4).getFullText()
+  const codesToRemove = [
+    modelFrom,
+    modelFromMany,
+    modelOfFrom,
+    modelOfFromMany,
+    modelUtilNarrow,
+    modelUtilFrom,
+    modelUtilFromMany,
+  ]
+  const finalCode = removeEach(codeWithoutImports, codesToRemove)
+  writeFileSync(outputFilePath, finalCode, 'utf-8')
+}
+
+/** @rtti:skip */
 function createPropertyDeclaration(
   p: ReflectedProperty,
   C: Type,
@@ -244,20 +290,6 @@ function createTypeNode(t: ReflectedTypeRef<RtType>): ts.TypeNode {
   } else {
     return ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)
   }
-}
-
-function lowerCaseIfPrimitive(name: string) {
-  const primitives = ['Boolean', 'Number', 'String', 'BigInt']
-  return primitives.includes(name) ? name.toLowerCase() : name
-}
-
-function isObjectLiteral(t: ReflectedTypeRef<RtType>): t is ReflectedObjectRef {
-  return t.is('object' as any)
-}
-
-function capitalizeDecorator(name: string) {
-  const exceptions = { isLength: 'Length' }
-  return exceptions[name] ?? name.charAt(0).toUpperCase() + name.slice(1)
 }
 
 function addValidatorIfOptional(p: ReflectedProperty) {
