@@ -9,7 +9,7 @@
     "prepare": "ts-patch install -s",
     "build": "npm run clean && tsc && cd ./frontend && npm run build",
     "start": "nest start",
-    "dev": "concurrently -n backend,frontend \"cross-env NODE_ENV=development nest start --watch\" \"cd ./frontend && npm run dev\"",
+    "dev": "concurrently -c yellow,blue -n BE,FE \"cross-env NODE_ENV=development nest start --watch\" \"npm --prefix ./frontend run dev\"",
     "debug": "nest start --debug --watch",
     "format": "prettier --write \"backend/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{backend,apps,libs,test}/**/*.ts\" --fix",
