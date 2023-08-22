@@ -4,15 +4,15 @@ import { validationPipe } from 'backend/config/validation-config'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import { generateModels } from '@/code-generation/generate-models'
-import { startFrontend } from '@/config/start-frontend'
 
 async function bootstrap() {
   process.env.TZ = 'Etc/UTC'
-  await generateModels()
-  // startFrontend()
   const app = await NestFactory.create(AppModule)
   // Importing env
   const configService = app.get(ConfigService)
+  const dev = configService.get<NodeEnv>('NODE_ENV') == 'development'
+  // Generate frontend models
+  if (dev) await generateModels()
   // Middlewares / Pipes
   app.setGlobalPrefix('api')
   app.useGlobalPipes(validationPipe)
@@ -27,3 +27,5 @@ async function bootstrap() {
   await app.listen(configService.get<number>('PORT') ?? 3000)
 }
 bootstrap()
+
+type NodeEnv = 'development' | 'production'
