@@ -8,7 +8,7 @@
   "scripts": {
     "prepare": "ts-patch install -s",
     "build": "npm run clean && tsc && cd ./frontend && npm run build",
-    "start": "nest start",
+    "start": "cross-env NODE_ENV=production nest start",
     "dev": "concurrently -c yellow,blue -n BE,FE \"cross-env NODE_ENV=development nest start --watch\" \"npm --prefix ./frontend run dev\"",
     "debug": "nest start --debug --watch",
     "format": "prettier --write \"backend/**/*.ts\" \"test/**/*.ts\"",
