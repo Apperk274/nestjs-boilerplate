@@ -19,5 +19,6 @@
 - npm ci
 - npm start
 
-<small>Alternative dev script (slower for some reason):</small>
-`tsc-watch -p tsconfig.build.json --onSuccess \"npm start\" --onFirstSuccess \"npm --prefix ./frontend run dev\"`
+Alternative dev script (slower for some reason):
+
+<small>`tsc-watch -p tsconfig.build.json --onSuccess \"npm start\" --onFirstSuccess \"npm --prefix ./frontend run dev\"`</small>
