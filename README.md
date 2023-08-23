@@ -15,6 +15,7 @@
 - - package-lock.json
 - - tsconfig.build.json
 - - tsconfig.json
+- - tsconfig-paths-bootstrap.js
 - npm ci
 - npm start
 
