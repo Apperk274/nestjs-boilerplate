@@ -13,7 +13,6 @@
 - - dist folder
 - - package.json
 - - package-lock.json
-- - tsconfig.build.json
 - - tsconfig.json
 - - tsconfig-paths-bootstrap.js
 - npm ci
@@ -21,4 +20,4 @@
 
 Alternative dev script (slower for some reason):
 
-<small>`tsc-watch -p tsconfig.build.json --onSuccess \"npm start\" --onFirstSuccess \"npm --prefix ./frontend run dev\"`</small>
+<small>`tsc-watch -p tsconfig.json --onSuccess \"npm start\" --onFirstSuccess \"npm --prefix ./frontend run dev\"`</small>

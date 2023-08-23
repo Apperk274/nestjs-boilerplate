@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prepare": "ts-patch install -s && cd ./frontend && npm ci",
-    "build": "npm run clean && tsc && cd ./frontend && npm run build",
+    "prepare": "ts-patch install -s && npm --prefix ./frontend ci",
+    "build": "npm run clean && tsc && npm --prefix ./frontend run build",
     "start": "cross-env NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js ./dist/backend/main.js",
     "dev": "concurrently -c yellow,blue -n BE,FE \"cross-env NODE_ENV=development nest start --watch\" \"npm --prefix ./frontend run dev\"",
     "debug": "nest start --debug --watch",
@@ -18,7 +18,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "docker:build": "docker build -t nestjs-boilerplate .",
+    "docker:run": "docker run -p 80:3000 nestjs-boilerplate"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
