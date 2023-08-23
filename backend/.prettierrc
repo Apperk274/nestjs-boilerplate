@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "singleQuote": true,
+  "semi": false,
+  "endOfLine": "auto",
+  "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": [
+        "*.spec.ts"
+      ],
+      "options": {
+        "printWidth": 120
+      }
+    }
+  ]
+}

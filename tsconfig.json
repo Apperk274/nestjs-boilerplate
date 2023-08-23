@@ -8,14 +8,31 @@
     "allowSyntheticDefaultImports": true,
     "target": "ES2021",
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./dist/backend",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": [
+        "backend/*"
+      ]
+    },
+    "plugins": [
+      {
+        "transform": "typescript-rtti/dist/transformer"
+      }
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "frontend",
+    "**/*spec.ts"
+  ]
 }
