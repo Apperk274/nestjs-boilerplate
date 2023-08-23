@@ -17,6 +17,7 @@ async function bootstrap() {
   // Generate frontend models
   if (dev) await generateModels()
   // Middlewares / Pipes
+  app.enableCors()
   app.setGlobalPrefix('api')
   app.useGlobalPipes(transformTypesPipe, validationPipe)
   // Configuring OpenAPI (Swagger)
