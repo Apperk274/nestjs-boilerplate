@@ -17,7 +17,6 @@ export const validationPipe = new ValidationPipe(pipeOptions)
 
 class TransformTypesPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
-    console.log(metadata)
     // Dont do anything if metatype is undefined
     if (metadata.metatype == undefined) return value
     // Parse strings of number and boolean
