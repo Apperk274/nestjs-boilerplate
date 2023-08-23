@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prepare": "ts-patch install -s",
+    "prepare": "ts-patch install -s && cd ./frontend && npm ci",
     "build": "npm run clean && tsc && cd ./frontend && npm run build",
     "start": "cross-env NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js ./dist/backend/main.js",
     "dev": "concurrently -c yellow,blue -n BE,FE \"cross-env NODE_ENV=development nest start --watch\" \"npm --prefix ./frontend run dev\"",
