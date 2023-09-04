@@ -60,14 +60,6 @@ export async function generateModels() {
       classDeclarations.push(classDeclaration)
     }
   }
-  // Combining class declarations
-  const resultFile = ts.createSourceFile(
-    'index.ts',
-    '',
-    ts.ScriptTarget.Latest,
-    /*setParentNodes*/ false,
-    ts.ScriptKind.TS
-  )
   // Creating validator imports
   const validatorsImportDeclaration = ts.factory.createImportDeclaration(
     undefined,
