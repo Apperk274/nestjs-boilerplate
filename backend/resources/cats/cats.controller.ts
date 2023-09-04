@@ -25,7 +25,7 @@ export class CatsController {
   @Get()
   async findAll() {
     const [entities, count] = await this.catsService.findAll()
-    return [Cat.fromMany(entities), count]
+    return [Cat.fromMany(entities), count] as const
   }
 
   @Get(':id')
