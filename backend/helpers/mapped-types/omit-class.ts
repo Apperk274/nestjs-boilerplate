@@ -1,5 +1,9 @@
 import { Type } from '@nestjs/common'
-import { copyClassData, type OmitStatics } from './util'
+import { copyClassData } from './util'
+import type {
+  OmitStatics,
+  RemoveKeysFromInstance,
+} from '@/helpers/type-helpers'
 
 export function OmitClass<
   T extends Type<InstanceType<T>>,
@@ -9,10 +13,3 @@ export function OmitClass<
   copyClassData(clazz, NewClass, { excludedMembers: keys })
   return NewClass as OmitStatics<RemoveKeysFromInstance<T, K>>
 }
-
-type RemoveKeysFromInstance<
-  T extends new (...args: any[]) => any,
-  K extends keyof InstanceType<T>
-> = {
-  [P in keyof T]: T[P]
-} & { new (...args: any[]): Omit<InstanceType<T>, K> }

@@ -1,5 +1,6 @@
 import { Type } from '@nestjs/common'
-import { getInstanceMemberNames, copyClassData, type OmitStatics } from './util'
+import { getInstanceMemberNames, copyClassData } from './util'
+import type { OmitStatics, PickKeysForInstance } from '@/helpers/type-helpers'
 
 export function PickClass<
   T extends Type<InstanceType<T>>,
@@ -12,10 +13,3 @@ export function PickClass<
   copyClassData(clazz, NewClass, { excludedMembers: excludedKeys })
   return NewClass as OmitStatics<PickKeysForInstance<T, K>>
 }
-
-type PickKeysForInstance<
-  T extends new (...args: any[]) => any,
-  K extends keyof InstanceType<T>
-> = {
-  [P in keyof T]: T[P]
-} & { new (...args: any[]): Pick<InstanceType<T>, K> }
