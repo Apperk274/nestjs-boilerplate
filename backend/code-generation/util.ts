@@ -1,6 +1,10 @@
 import * as ts from 'typescript'
 import type { ReflectedObjectRef, ReflectedTypeRef } from 'typescript-rtti'
 import type { RtType } from 'typescript-rtti/dist/common'
+import Handlebars, { HelperOptions } from 'handlebars'
+import { readFileSync, writeFileSync } from 'fs'
+import { join } from 'path'
+import { LiteralUnion } from '@/helpers/type-helpers'
 
 export function removeEach(code: string, searchValues: string[]) {
   for (const searchValue of searchValues) {
@@ -136,3 +140,52 @@ export function printTS(nodes: readonly any[]) {
   )
   return code
 }
+
+export function generateUsingHbs(
+  hbsTemplate: LiteralUnion<HbsTemplate>,
+  outputPath: string,
+  context: any,
+  options?: Handlebars.RuntimeOptions
+) {
+  const templateFile = readFileSync(
+    join(__dirname, 'templates', hbsTemplate + '.hbs'),
+    {
+      encoding: 'utf8',
+    }
+  )
+  Handlebars.registerHelper('stringify', context => JSON.stringify(context))
+  Handlebars.registerHelper(
+    'ifNotEmpty',
+    function (param, options: HelperOptions) {
+      return param.length ? options.fn(this) : options.inverse(this)
+    }
+  )
+  Handlebars.registerHelper(
+    'ifDefined',
+    function (param, options: HelperOptions) {
+      return param !== undefined ? options.fn(this) : options.inverse(this)
+    }
+  )
+  const template = Handlebars.compile(templateFile)
+  const result = template(context, options)
+  writeFileSync(outputPath, result, 'utf-8')
+}
+
+export function combineIntoObjectLiteral(
+  structure: { name: string; type: ts.TypeNode; optional: boolean }[]
+) {
+  return ts.factory.createTypeLiteralNode(
+    structure.map(({ name, type, optional }) =>
+      ts.factory.createPropertySignature(
+        undefined,
+        ts.factory.createIdentifier(name),
+        optional
+          ? ts.factory.createToken(ts.SyntaxKind.QuestionToken)
+          : undefined,
+        type
+      )
+    )
+  )
+}
+
+type HbsTemplate = 'api-generator'

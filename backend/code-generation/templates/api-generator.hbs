@@ -1,0 +1,51 @@
+import axios, { type AxiosResponse } from "axios"
+import Cookies from "universal-cookie";
+import cookieKeys from "@/constants/cookie-keys";
+const lang = "en"
+const routeParamRegex = /^:(\w+)$/;
+// Model Imports
+import { {{#each imports}}
+{{this}},{{/each}}
+} from "models"
+
+function createAxiosInstance() {
+    const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
+    return axios.create({ baseURL: (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000') + "/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
+}
+
+function createUrl(params: { [key: string]: string }, route: string) {
+    let url = ""
+    for (const block of route.substring(1).split("/")) {
+        url += "/"
+        const paramRegExpArray = block.match(routeParamRegex)
+        if (paramRegExpArray == null) { url += block; continue }
+        else url += params[`${Object.keys(params).find(p => p === paramRegExpArray[1])}`]
+    }
+    return url
+}
+
+export default {
+    {{#each controllers}}
+    {{this.name}}: {
+        {{#each this.endpoints}}
+        async {{this.name}}({{#ifDefined this.params.body}}
+            body: {{this.params.body}},{{/ifDefined}}{{#ifDefined this.params.query}}
+            queries: {{this.params.query}},{{/ifDefined}}{{#ifDefined this.params.param}}
+            params: {{this.params.param}},{{/ifDefined}}
+        ) : Promise<AxiosResponse<{{this.returnType}}>>
+        {
+            const route = "{{this.path}}"
+            const url = {{#if this.params.hasParams}}createUrl(params, route){{else}}route{{/if}}
+            return await createAxiosInstance().request({
+                method: "{{this.requestMethod}}",
+                url,{{#ifDefined this.params.body}}
+                data: body,{{/ifDefined}}{{#ifDefined this.params.query}}
+                params: queries,{{/ifDefined}}{{#if this.blob}}
+                responseType: "blob",{{/if}}
+            })
+        },
+        {{/each}}
+    },
+    {{/each}}
+    
+} 
