@@ -2,6 +2,8 @@ import { reflect } from 'typescript-rtti'
 import 'reflect-metadata'
 
 export class Model {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  protected constructor() {}
   static of<T extends object>(clazz: new () => T) {
     return new ModelOf(clazz)
   }
@@ -63,7 +65,7 @@ export class ModelUtil {
   static create<T extends object>(clazz: new () => T, obj: T): T {
     const instance = new clazz()
     Object.keys(obj).forEach(key => {
-      ;(instance as any)[key] = (obj as any)[key]
+      instance[key] = obj[key]
     })
     return instance
   }
@@ -74,7 +76,7 @@ export class ModelUtil {
   ): T {
     const instance = new clazz()
     Object.keys(obj).forEach(key => {
-      ;(instance as any)[key] = (obj as any)[key]
+      instance[key] = obj[key]
     })
     return instance
   }
