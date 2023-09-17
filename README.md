@@ -21,3 +21,6 @@
 Alternative dev script (slower for some reason):
 
 <small>`tsc-watch -p tsconfig.json --onSuccess \"npm start\" --onFirstSuccess \"npm --prefix ./frontend run dev\"`</small>
+
+# TO DO
+- Integrate Infisicial for managing environment variables
